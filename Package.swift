@@ -1,21 +1,27 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.4
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "TimerTechTaskPackage",
+    platforms: [.iOS(.v12)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "TimerTechTaskPackage",
-            targets: ["TimerTechTaskPackage"]),
+        .library(name: "TimerTechTaskPackage", targets: ["TimerTechTaskPackage"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/airbnb/lottie-ios.git", from: "3.1.8"),
+        .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.0.1")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "TimerTechTaskPackage"),
-
+            name: "TimerTechTaskPackage",
+            dependencies: [
+                .product(name: "Lottie", package: "lottie-ios"),
+                "SnapKit"
+            ],
+            path: "Sources/TimerTechTaskPackage",
+            resources: [.process("Resources")]
+        ),
     ]
 )
