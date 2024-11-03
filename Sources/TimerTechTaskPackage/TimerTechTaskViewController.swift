@@ -10,7 +10,7 @@ import UIKit
 import Lottie
 import SnapKit
 
-class TimerTechTaskViewController: UIViewController {
+public class TimerTechTaskViewController: UIViewController {
    //MARK: Literals
     private var initialTimerValue = "00:00:00"
     private var labelFontName = "SFProDisplay-Semibold"
@@ -26,7 +26,7 @@ class TimerTechTaskViewController: UIViewController {
     private var remainingTime : TimeInterval = 1560
     
     //MARK: Functions
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setupCircleView()
         setupAnimationView()
