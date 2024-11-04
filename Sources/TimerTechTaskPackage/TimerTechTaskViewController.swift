@@ -11,23 +11,24 @@ import Lottie
 import SnapKit
 
 public class TimerTechTaskViewController: UIViewController {
-   //MARK: Literals
+   // MARK: - Literals
     private var initialTimerValue = "00:00:00"
     private var labelFontName = "SFProDisplay-Semibold"
     private var animationName = "vibratingBox3D"
-    private var backgroundColor = "#F5F5F5"
-   
-    //MARK: UI Elements
+    
+    // MARK: - UI Elements
     private var backgroundView = UIView()
     private var animationView = AnimationView()
     private var circleView = UIView()
     private var timerLabel = UILabel()
     private var countdownTimer: Timer?
-    private var remainingTime : TimeInterval = 1560
+    private var remainingTime: TimeInterval = 1560
     
-    //MARK: Functions
+    // MARK: - Functions
     public override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .clear
+        setupBackgroundView()
         setupCircleView()
         setupAnimationView()
         setupTimerLabel()
@@ -35,62 +36,66 @@ public class TimerTechTaskViewController: UIViewController {
         setupConstraints()
     }
     
+    private func setupBackgroundView() {
+        backgroundView.backgroundColor = UIColor.clear
+        view.addSubview(backgroundView)
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupCircleView() {
+        circleView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        circleView.layer.borderWidth = 1.91
+        circleView.layer.borderColor = UIColor.white.cgColor
+        view.addSubview(circleView)
+        circleView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
     private func setupAnimationView() {
-        animationView = AnimationView(name: animationName )
-        animationView.frame = CGRect(x: 0, y: 0, width: 106, height: 107)
-        animationView.center = CGPoint(x: view.center.x, y: view.center.y)
+        animationView = AnimationView(name: animationName)
         animationView.contentMode = .scaleAspectFit
         animationView.loopMode = .loop
+        animationView.translatesAutoresizingMaskIntoConstraints = false
     }
-    
-     private func setupCircleView() {
-         circleView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-         circleView.layer.cornerRadius = 84
-         circleView.layer.borderWidth = 1.91
-         circleView.layer.borderColor = UIColor.white.cgColor
-     }
     
     private func setupTimerLabel() {
-        timerLabel = UILabel()
         timerLabel.textAlignment = .center
+        timerLabel.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    private func setupUI(){
-        for subView in [circleView, animationView, timerLabel] {
+    private func setupUI() {
+        for subView in [backgroundView, circleView, animationView, timerLabel] {
             view.addSubview(subView)
-            subView.translatesAutoresizingMaskIntoConstraints = false
         }
         
         animationView.play()
         startCountdown()
     }
     
-    func setupConstraints() {
-        let safeArea = view.safeAreaLayoutGuide
-       
-        circleView.snp.makeConstraints { make in
-            make.centerX.equalTo(safeArea)
-            make.centerY.equalTo(safeArea)
-            make.height.equalTo(168)
-            make.width.equalTo(168)
-        }
-
-        animationView.snp.makeConstraints { make in
-            make.top.equalTo(circleView.snp.top)
-            make.centerX.equalTo(safeArea)
-            make.height.equalTo(106)
-            make.width.equalTo(106)
-        }
-
-        timerLabel.snp.makeConstraints { make in
-            make.centerX.equalTo(safeArea)
-            make.top.equalTo(animationView.snp.bottom).offset(6) 
-            make.height.equalTo(23)
-            make.width.equalTo(100)
+    private func setupConstraints() {
+        
+        backgroundView.snp.makeConstraints { make in
+            make.center.equalTo(view)
+            make.size.equalTo(view.snp.width)
         }
         
+        circleView.snp.makeConstraints { make in
+            make.center.equalTo(view)
+            make.width.height.equalTo(backgroundView.snp.width)
+        }
+        
+        animationView.snp.makeConstraints { make in
+            make.centerX.equalTo(circleView)
+            make.top.equalTo(circleView)
+            make.width.height.equalTo(circleView.snp.width).multipliedBy(0.6)
+        }
+        
+        timerLabel.snp.makeConstraints { make in
+            make.centerX.equalTo(circleView)
+            make.top.equalTo(animationView.snp.bottom).offset(6)
+            make.width.equalTo(circleView.snp.width).multipliedBy(0.6)
+            make.height.equalTo(circleView.snp.width).multipliedBy(0.13)
+        }
     }
-
     
     private func startCountdown() {
         updateTimerLabel()
@@ -110,19 +115,29 @@ public class TimerTechTaskViewController: UIViewController {
     
     private func updateTimerLabel() {
         let textToShow = remainingTime.formattedTimeForTimerTask()
-        guard let labelFont = UIFont(name: labelFontName, size: 22) else {return}
-            let attributedText = NSAttributedString(
-                string: textToShow,
-                attributes: [
-                    .strokeColor: UIColor.black,
-                    .foregroundColor: UIColor.white,
-                    .strokeWidth: -4.0,
-                    .font: labelFont
-                    
-                ]
-            )
+        
+        let fontSize = circleView.frame.width * 0.13
+        let strokeWidth = -circleView.frame.width * 0.03
+
+        guard let labelFont = UIFont(name: labelFontName, size: fontSize) else { return }
+        let attributedText = NSAttributedString(
+            string: textToShow,
+            attributes: [
+                .strokeColor: UIColor.black,
+                .foregroundColor: UIColor.white,
+                .strokeWidth: strokeWidth,
+                .font: labelFont
+            ]
+        )
+        
+        timerLabel.attributedText = attributedText
+    }
+    
+    public override func viewDidLayoutSubviews() {
+            super.viewDidLayoutSubviews()
             
-            timerLabel.attributedText = attributedText
+         
+            circleView.layer.cornerRadius = circleView.frame.width / 2
         }
     
     deinit {
